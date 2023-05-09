@@ -101,7 +101,7 @@ class Bird:
 
 
 class Beam:
-    """ 
+    """
     ビームに関するクラス
     """
     
