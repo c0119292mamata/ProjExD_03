@@ -104,7 +104,6 @@ class Beam:
     """ 
     ビームに関するクラス
     """
-    
     def __init__(self,bird:Bird):
         """
         画像surface
@@ -129,7 +128,8 @@ class Beam:
         if not (bird.sum_mv[0] == 0 and bird.sum_mv[1] == 0):
             self._img=self.a[tuple(self.lis)]
         self._rct = self._img.get_rect()
-        self._rct.left = bird._rct.right
+        self._rct.centerx = bird._rct.centerx
+        self._rct.centery = bird._rct.centery
         self._rct.centery=bird._rct.centery
         
     def update(self,screen):
@@ -173,11 +173,11 @@ class Bomb:
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+
 class Explosion:
     """
     爆発に関するクラス
     """
-    
     def __init__(self,bomb:Bomb):
         _img=pg.image.load(f"fig/explosion.gif")
         self.ex_lis=[_img,pg.transform.flip(_img,False,True)]
@@ -228,10 +228,6 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
-            
-
-        #if beam._rct.colliderect(bomb._rct):
-            
         
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
