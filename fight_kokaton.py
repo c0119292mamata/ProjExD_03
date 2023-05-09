@@ -43,7 +43,7 @@ class Bird:
         """
         self._img = pg.transform.flip(  # 左右反転
             pg.transform.rotozoom(  # 2倍に拡大
-                pg.image.load(f"ex03/fig/{num}.png"), 
+                pg.image.load(f"fig/{num}.png"), 
                 0, 
                 2.0), 
             True, 
@@ -58,7 +58,7 @@ class Bird:
         引数1 num：こうかとん画像ファイル名の番号
         引数2 screen：画面Surface
         """
-        self._img = pg.transform.rotozoom(pg.image.load(f"ex03/fig/{num}.png"), 0, 2.0)
+        self._img = pg.transform.rotozoom(pg.image.load(f"fig/{num}.png"), 0, 2.0)
         screen.blit(self._img, self._rct)
 
     def update(self, key_lst: list[bool], screen: pg.Surface):
@@ -77,6 +77,28 @@ class Bird:
         screen.blit(self._img, self._rct)
 
 
+class Beam:
+    """
+    ビームに関するクラス
+    """
+    def __init__(self,bird:Bird):
+        """
+        画像surface
+        画像surfaceに対応したrect
+        rectに座標を設定する
+        """
+        self._img = pg.transform.rotozoom(pg.image.load(f"fig/beam.png"),0,2.0)
+        self._rct = self._img.get_rect()
+        self._rct.left = bird._rct.right
+        self._rct.centery=bird._rct.centery
+        self._vx,self._vy=1,0
+        
+    def update(self,screen):
+        
+        self._rct.move_ip(self._vx, self._vy)
+        screen.blit(self._img, self._rct)
+        
+        
 class Bomb:
     """
     爆弾に関するクラス
@@ -112,29 +134,46 @@ def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
-    bg_img = pg.image.load("ex03/fig/pg_bg.jpg")
+    bg_img = pg.image.load("fig/pg_bg.jpg")
+    
 
     bird = Bird(3, (900, 400))
     bomb = Bomb((255, 0, 0), 10)
+    beam=None
+    
 
     tmr = 0
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                beam = Beam(bird)
+                
         tmr += 1
         screen.blit(bg_img, [0, 0])
         
-        if bird._rct.colliderect(bomb._rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        if bomb is not None:
+            if bird._rct.colliderect(bomb._rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
+            bomb.update(screen)
 
+        #if beam._rct.colliderect(bomb._rct):
+            
+        
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        bomb.update(screen)
+
+        if beam is not None:
+            beam.update(screen)
+            if bomb is not None and beam._rct.colliderect(bomb._rct):
+                bird.change_img(9, screen)
+                beam=None
+                bomb=None    
         pg.display.update()
         clock.tick(1000)
 
