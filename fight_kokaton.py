@@ -98,6 +98,8 @@ class Bird:
         if not (self.sum_mv[0] == 0 and self.sum_mv[1] == 0):
             self._img = self ._imgs[tuple(self.sum_mv)]
         screen.blit(self._img, self._rct)
+    def muki(self):
+        return self._img
 
 
 class Beam:
@@ -135,6 +137,9 @@ class Beam:
     def update(self,screen):
         self._vx=self.lis[0]*2
         self._vy=self.lis[1]*2
+        if self._vx==0 and self._vy==0:
+            self._vx=2
+            self._vy=0
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
         
@@ -232,7 +237,7 @@ def main():
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
 
-        if beam is not None:
+        for beam in beams:
             beam.update(screen)
             for i,bomb in enumerate(bombs):
                 if beam._rct.colliderect(bomb._rct):
