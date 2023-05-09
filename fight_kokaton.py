@@ -87,7 +87,7 @@ class Beam:
         画像surfaceに対応したrect
         rectに座標を設定する
         """
-        self._img = pg.transform.rotozoom(pg.image.load(f"fig/beam.png"),0,2.0)
+        self._img = pg.transform.rotozoom(pg.image.load(f"./fig/beam.png"),0,2.0)
         self._rct = self._img.get_rect()
         self._rct.left = bird._rct.right
         self._rct.centery=bird._rct.centery
